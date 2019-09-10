@@ -33,27 +33,50 @@ def deal_card_to_dealer():
     deal_card(dealer_card_frame)
     
 
+#def deal_card_to_player():
+#    global player_score
+#    global player_ace
+#    global player_score_var
+#    card_value = deal_card(player_card_frame)[0]
+#    # because this method returns the popped element of list
+#    # and the popped element of the list is a tuple
+#    
+#    if card_value == 1 and not player_ace:
+#        player_ace = True
+#        card_value = 11
+#    player_score += card_value
+##    if player is busted check is there is an ace and subtract score
+#    if player_score > 21 and player_ace:
+#        player_score -= 10
+#        player_ace = False
+#    player_score_var.set(player_score)
+#    if player_score > 21:
+#        result_text.set("Dealer wins!")
+
+
 def deal_card_to_player():
-    global player_score
-    global player_ace
-    global player_score_var
-    card_value = deal_card(player_card_frame)[0]
-    # because this method returns the popped element of list
-    # and the popped element of the list is a tuple
-    
-    if card_value == 1 and not player_ace:
-        player_ace = True
-        card_value = 11
-    player_score += card_value
-#    if player is busted check is there is an ace and subtract score
-    if player_score > 21 and player_ace:
-        player_score -= 10
-        player_ace = False
+#    global player_score
+    player_hand.append(deal_card(player_card_frame))
+    player_score = score_hand(player_hand)
     player_score_var.set(player_score)
     if player_score > 21:
         result_text.set("Dealer wins!")
     
-
+    
+def score_hand(hand):
+    score = 0
+    ace = False
+    for next_card in hand:
+        card_value = next_card[0]
+        if card_value == 1 and not ace:
+            ace = True
+            card_value = 11
+        score += card_value
+        if score > 21 and ace:
+            score -= 10
+            ace = False
+    return score
+    
     
 main_window = tk.Tk()
 main_window_title = "Blackjack"
@@ -78,7 +101,7 @@ card_frame.grid(row=1, column=0, sticky='ew', columnspan=3, rowspan=2)
 dealer_score_var = tk.IntVar()
 #dealer_score_var.set(0)
 tk.Label(card_frame, text='Dealer', background='green', fg='white').grid(row=0, column=0)
-tk.Label(card_frame, text=dealer_score_var, background='green', fg='white').grid(row=1, column=0)
+tk.Label(card_frame, textvariable=dealer_score_var, background='green', fg='white').grid(row=1, column=0)
 
 dealer_card_frame = tk.Frame(card_frame, relief=tk.SUNKEN, border=1,
                       background=main_window_bg_color)
@@ -89,7 +112,7 @@ player_score_var = tk.IntVar()
 #player_score_var.set(player_score)
 player_ace = False
 tk.Label(card_frame, text='Player', background='green', fg='white').grid(row=2, column=0)
-tk.Label(card_frame, text=player_score_var, background='green', fg='white').grid(row=3, column=0)
+tk.Label(card_frame, textvariable=player_score_var, background='green', fg='white').grid(row=3, column=0)
 
 player_card_frame = tk.Frame(card_frame, relief=tk.SUNKEN, border=1,
                       background=main_window_bg_color)
