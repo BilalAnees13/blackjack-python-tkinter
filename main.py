@@ -30,9 +30,22 @@ def deal_card(frame):
 
 
 def deal_card_to_dealer():
-    deal_card(dealer_card_frame)
+    dealer_score = score_hand(dealer_hand)
+    while 0 < dealer_score < 17:
+        dealer_hand.append(deal_card(dealer_card_frame))
+        dealer_score = score_hand(dealer_hand)
+        dealer_score_var.set(dealer_score)
     
-
+    player_score = score_hand(player_hand)
+    
+    if dealer_score > 21:
+        result_text.set("Dealer wins!")
+    elif dealer_score > 21 or dealer_score < player_score:
+        result_text.set("Player wins!")
+    elif dealer_score > player_score:
+        result_text.set("Dealer wins!")
+    else:
+        result_text.set("Draw!")
 #def deal_card_to_player():
 #    global player_score
 #    global player_ace
@@ -76,6 +89,34 @@ def score_hand(hand):
             score -= 10
             ace = False
     return score
+    
+  
+def reset_game():
+    global dealer_card_frame
+    global player_card_frame
+    global player_hand
+    global dealer_hand
+    
+    player_hand.clear()
+    dealer_hand.clear()
+    random.shuffle(deck)
+    
+    dealer_card_frame.destroy()
+    player_card_frame.destroy()
+    
+    dealer_card_frame = tk.Frame(card_frame, relief=tk.SUNKEN, border=1,
+                      background=main_window_bg_color)
+    dealer_card_frame.grid(row=0, column=1, sticky='ew', rowspan=2)
+    player_card_frame = tk.Frame(card_frame, relief=tk.SUNKEN, border=1,
+                          background=main_window_bg_color)
+    player_card_frame.grid(row=2, column=1, sticky='ew', rowspan=2)
+
+    deal_card_to_player()
+    #deal_card_to_dealer()
+    dealer_hand.append(deal_card(dealer_card_frame))
+    dealer_score_var.set(score_hand(dealer_hand))
+    deal_card_to_player()
+    
     
     
 main_window = tk.Tk()
@@ -125,6 +166,8 @@ dealer_button = tk.Button(button_frame, text="Dealer", command=deal_card_to_deal
 dealer_button.grid(row=0, column=0)
 player_button = tk.Button(button_frame, text="Player", command=deal_card_to_player)
 player_button.grid(row=0, column=1)
+reset_button = tk.Button(button_frame, text="Reset", command=reset_game)
+reset_button.grid(row=0, column=2)
 
 cards = []
 load_card_images(cards)
@@ -135,5 +178,13 @@ random.shuffle(deck)
 
 player_hand = []
 dealer_hand = []
+
+deal_card_to_player()
+#deal_card_to_dealer()
+dealer_hand.append(deal_card(dealer_card_frame))
+dealer_score_var.set(score_hand(dealer_hand))
+deal_card_to_player()
+#print(dealer_card_frame.children)
+#print(player_card_frame.children)
 
 main_window.mainloop()
